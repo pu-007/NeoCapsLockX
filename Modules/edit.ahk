@@ -1,9 +1,6 @@
-﻿; Text editing — Space hold + vim-like keys
-; HJKL cursor, YO PgUp/PgDn, 0/$ Home/End, WB word jump
-; d/v operators, Shift+V select line, Shift+X delete line
-; Esc handled by main script (cancels operator, toggles CapsLock)
+﻿; Text editing - Space hold + vim-like keys
 
-; ==== Operator-pending mode (after d/v pressed) — MUST come FIRST ====
+; Operator-pending mode (after d/v pressed) - must come first for priority
 #If spaceMode && !mouseLock && opMode
 
 h::
@@ -27,15 +24,19 @@ return
 j::
 spaceUsed:=1
 if (opMode == "visual")
+{
     Send +{Down}
-opMode:=""
+    opMode:=""
+}
 return
 
 k::
 spaceUsed:=1
 if (opMode == "visual")
+{
     Send +{Up}
-opMode:=""
+    opMode:=""
+}
 return
 
 w::
@@ -65,6 +66,7 @@ else if (opMode == "visual")
 opMode:=""
 return
 
+; Shift+4 ($) = select/delete to end
 +4::
 spaceUsed:=1
 if (opMode == "delete")
@@ -76,7 +78,7 @@ return
 
 #If
 
-; ==== Normal edit mode ====
+; Normal edit mode
 #If spaceMode && !mouseLock
 
 h::
@@ -124,6 +126,7 @@ spaceUsed:=1
 Send {Blind}{Home}
 return
 
+; Shift+4 ($) = End
 +4::
 spaceUsed:=1
 Send {Blind}{End}
@@ -131,35 +134,41 @@ return
 
 x::
 spaceUsed:=1
-Send {Blind}{Delete}
+if GetKeyState("Shift", "P")
+    Send {Home}+{End}{Delete}
+else
+    Send {Blind}{Delete}
 return
 
+; Shift+V = select line; V = visual mode or select line if already visual
 +v::
 spaceUsed:=1
 Send {Home}+{End}
 return
 
-+x::
-spaceUsed:=1
-Send {Home}+{End}{Delete}
-return
-
 v::
 spaceUsed:=1
-if (opMode == "visual") {
+if (opMode == "visual")
+{
     Send {Home}+{End}
     opMode:=""
-} else {
+}
+else
+{
     opMode:="visual"
 }
 return
 
+; d = delete mode or delete line if already in delete mode
 d::
 spaceUsed:=1
-if (opMode == "delete") {
+if (opMode == "delete")
+{
     Send {Home}+{End}{Delete}
     opMode:=""
-} else {
+}
+else
+{
     opMode:="delete"
 }
 return
