@@ -31,13 +31,31 @@ setCapsLock2:
 CapsLock2:=""
 return
 
-; ==== Space: hold = edit modifier ====
-Space::
+; ==== Space: hold = edit modifier, tap = Space ====
+; Bypass: if Ctrl/Alt/Win held when Space is pressed, pass through
+$Space::
+if GetKeyState("Ctrl", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P")
+{
+    Send {Blind}{Space Down}
+    KeyWait, Space
+    Send {Blind}{Space Up}
+    return
+}
 spaceMode:=1, spaceUsed:="", opMode:=""
+SetTimer, spaceHoldRepeat, -200
 KeyWait, Space
+SetTimer, spaceHoldRepeat, Off
 spaceMode:=""
 if !spaceUsed
     Send {Blind}{Space}
+return
+
+spaceHoldRepeat:
+; Space held >200ms with no edit key: auto-repeat spaces (mimics native key-repeat)
+if spaceMode && !spaceUsed {
+    Send {Blind}{Space}
+    SetTimer, spaceHoldRepeat, -50
+}
 return
 
 ; ==== Esc: toggle CapsLock indicator ($ prevents synthetic triggers) ====
