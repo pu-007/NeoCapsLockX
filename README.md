@@ -36,8 +36,8 @@ AHK v1. Run: `.\AutoHotkey\AutoHotkeyU64.exe CapsLockX.ahk`
 ### Workspace
 | Key | Action |
 |-----|--------|
-| `Caps+0~9` | Switch workspace |
-| `Caps+Shift+0~9` | Move window to workspace |
+| `Caps+1~9` | Switch workspace |
+| `Caps+Shift+1~9` | Move window to workspace |
 
 ### Monitor
 | Key | Action |

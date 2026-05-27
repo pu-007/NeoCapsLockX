@@ -1,4 +1,4 @@
-﻿; Komorebi window management + mouse control — CapsLock hold + key
+﻿; Komorebi window management + mouse control - CapsLock hold + key
 
 Komorebic(cmd) {
     Run, komorebic.exe %cmd%,, Hide
@@ -7,17 +7,37 @@ Komorebic(cmd) {
 #If CapsLock && !mouseLock
 
 ;=== Mouse control ===
-w::g_mouseModel.upDown("w"), CapsLock2:=""
-w up::g_mouseModel.upUp()
+$w::
+g_mouseModel.上按("w")
+CapsLock2:=""
+return
+$w up::
+g_mouseModel.上放()
+return
 
-a::g_mouseModel.leftDown("a"), CapsLock2:=""
-a up::g_mouseModel.leftUp()
+$a::
+g_mouseModel.左按("a")
+CapsLock2:=""
+return
+$a up::
+g_mouseModel.左放()
+return
 
-s::g_mouseModel.downDown("s"), CapsLock2:=""
-s up::g_mouseModel.downUp()
+$s::
+g_mouseModel.下按("s")
+CapsLock2:=""
+return
+$s up::
+g_mouseModel.下放()
+return
 
-d::g_mouseModel.rightDown("d"), CapsLock2:=""
-d up::g_mouseModel.rightUp()
+$d::
+g_mouseModel.右按("d")
+CapsLock2:=""
+return
+$d up::
+g_mouseModel.右放()
+return
 
 q::
 CapsLock2:=""
@@ -33,144 +53,315 @@ KeyWait e
 Send {RButton Up}
 return
 
-r::g_scrollModel.upDown("r"), CapsLock2:=""
-r up::g_scrollModel.upUp()
-
-f::g_scrollModel.downDown("f"), CapsLock2:=""
-f up::g_scrollModel.downUp()
-
-;=== Komorebi window management ===
-; hjkl: focus / move
-h::
-j::
-k::
-l::
-if GetKeyState("Shift", "P")
-    Komorebic("move " (A_ThisHotkey="h"?"left":A_ThisHotkey="j"?"down":A_ThisHotkey="k"?"up":"right"))
-else
-    Komorebic("focus " (A_ThisHotkey="h"?"left":A_ThisHotkey="j"?"down":A_ThisHotkey="k"?"up":"right"))
+$r::
+g_scrollModel.上按("r")
 CapsLock2:=""
 return
+$r up::
+g_scrollModel.上放()
+return
 
-; 0-9: workspace
-1::
-2::
-3::
-4::
-5::
-6::
-7::
-8::
-9::
-0::
-idx := A_ThisHotkey
-if GetKeyState("Shift", "P")
-    Komorebic("move-to-workspace " idx)
-else
-    Komorebic("focus-workspace " idx)
+$f::
+g_scrollModel.下按("f")
 CapsLock2:=""
+return
+$f up::
+g_scrollModel.下放()
+return
+
+;=== HJKL - each has own body (no stacking) ===
+*h::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move left")
+else
+    Komorebic("focus left")
+return
+
+*j::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move down")
+else
+    Komorebic("focus down")
+return
+
+*k::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move up")
+else
+    Komorebic("focus up")
+return
+
+*l::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move right")
+else
+    Komorebic("focus right")
+return
+
+;=== 0-9 workspace - each has own body ===
+*1::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 0")
+else
+    Komorebic("focus-workspace 0")
+return
+
+*2::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 1")
+else
+    Komorebic("focus-workspace 1")
+return
+
+*3::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 2")
+else
+    Komorebic("focus-workspace 2")
+return
+
+*4::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 3")
+else
+    Komorebic("focus-workspace 3")
+return
+
+*5::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 4")
+else
+    Komorebic("focus-workspace 4")
+return
+
+*6::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 5")
+else
+    Komorebic("focus-workspace 5")
+return
+
+*7::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 6")
+else
+    Komorebic("focus-workspace 6")
+return
+
+*8::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 7")
+else
+    Komorebic("focus-workspace 7")
+return
+
+*9::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 8")
+else
+    Komorebic("focus-workspace 8")
+return
+
+*0::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-workspace 9")
+else
+    Komorebic("focus-workspace 9")
 return
 
 ; Resize
-=::
--::
+*=::
+CapsLock2:=""
 if GetKeyState("Shift", "P")
-    Komorebic("resize-axis vertical " (A_ThisHotkey="="?"increase":"decrease"))
+    Komorebic("resize-axis vertical increase")
 else
-    Komorebic("resize-axis horizontal " (A_ThisHotkey="="?"increase":"decrease"))
+    Komorebic("resize-axis horizontal increase")
+return
+
+*-::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("resize-axis vertical decrease")
+else
+    Komorebic("resize-axis horizontal decrease")
+return
+
++Left::
+Komorebic("resize left decrease")
+CapsLock2:=""
+return
++Right::
+Komorebic("resize left increase")
+CapsLock2:=""
+return
++Up::
+Komorebic("resize up decrease")
+CapsLock2:=""
+return
++Down::
+Komorebic("resize up increase")
 CapsLock2:=""
 return
 
-+Left::Komorebic("resize left decrease"), CapsLock2:=""
-+Right::Komorebic("resize left increase"), CapsLock2:=""
-+Up::Komorebic("resize up decrease"), CapsLock2:=""
-+Down::Komorebic("resize up increase"), CapsLock2:=""
-
 ; Window ops
-p::
+*p::
+CapsLock2:=""
 if GetKeyState("Shift", "P")
     Komorebic("toggle-pause")
 else
     Komorebic("promote")
-CapsLock2:=""
 return
 
-m::
+*m::
+CapsLock2:=""
 if GetKeyState("Shift", "P")
     Komorebic("minimize")
 else
     Komorebic("toggle-maximize")
+return
+
+g::
+Komorebic("toggle-monocle")
 CapsLock2:=""
 return
 
-g::Komorebic("toggle-monocle"), CapsLock2:=""
-t::Komorebic("toggle-float"), CapsLock2:=""
+t::
+Komorebic("toggle-float")
+CapsLock2:=""
+return
 
-z::
-if GetKeyState("Shift", "P") {
-    CapsLock2:=""
+*z::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+{
     try {
         WinGet, pid, PID, A
         Process, Close, %pid%
     }
-} else {
-    CapsLock2:=""
+}
+else
+{
     try WinClose, A
 }
 return
 
-; Layouts
-,::
-.::
-/::
-layout := A_ThisHotkey="," ? "vertical-stack" : (A_ThisHotkey="." ? "bsp" : "ultrawide-vertical-stack")
+; Layouts - each has own body
+*,::
+CapsLock2:=""
 if GetKeyState("Shift", "P")
-    layout := A_ThisHotkey="," ? "right-main-vertical-stack" : (A_ThisHotkey="." ? "grid" : "horizontal-stack")
-Komorebic("change-layout " layout)
+    Komorebic("change-layout right-main-vertical-stack")
+else
+    Komorebic("change-layout vertical-stack")
+return
+
+*.::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("change-layout grid")
+else
+    Komorebic("change-layout bsp")
+return
+
+*/::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("change-layout horizontal-stack")
+else
+    Komorebic("change-layout ultrawide-vertical-stack")
+return
+
+PgUp::
+Komorebic("cycle-layout previous")
+CapsLock2:=""
+return
+PgDn::
+Komorebic("cycle-layout next")
 CapsLock2:=""
 return
 
-PgUp::Komorebic("cycle-layout previous"), CapsLock2:=""
-PgDn::Komorebic("cycle-layout next"), CapsLock2:=""
-
-x::
+*x::
 if GetKeyState("Shift", "P")
-    Komorebic("flip-layout x"), CapsLock2:=""
+{
+    Komorebic("flip-layout x")
+    CapsLock2:=""
+}
 return
 
-y::
+*y::
 if GetKeyState("Shift", "P")
-    Komorebic("flip-layout y"), CapsLock2:=""
+{
+    Komorebic("flip-layout y")
+    CapsLock2:=""
+}
 return
 
 ; Stacks
-`;::Komorebic("cycle-stack previous"), CapsLock2:=""
-'::Komorebic("cycle-stack next"), CapsLock2:=""
-\::Komorebic("stack left"), CapsLock2:=""
-+\::Komorebic("unstack"), CapsLock2:=""
+`;::
+Komorebic("cycle-stack previous")
+CapsLock2:=""
+return
+'::
+Komorebic("cycle-stack next")
+CapsLock2:=""
+return
+
+*\::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("unstack")
+else
+    Komorebic("stack left")
+return
 
 ; Cycle focus/move
-[::
-]::
-if GetKeyState("Shift", "P")
-    Komorebic("cycle-move " (A_ThisHotkey="["?"previous":"next"))
-else
-    Komorebic("cycle-focus " (A_ThisHotkey="["?"previous":"next"))
+*[::
 CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("cycle-move previous")
+else
+    Komorebic("cycle-focus previous")
+return
+
+*]::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("cycle-move next")
+else
+    Komorebic("cycle-focus next")
 return
 
 ; Monitors
-F1::
-F2::
-idx := A_ThisHotkey="F1" ? "0" : "1"
-if GetKeyState("Shift", "P")
-    Komorebic("move-to-monitor " idx)
-else
-    Komorebic("focus-monitor " idx)
+*F1::
 CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-monitor 0")
+else
+    Komorebic("focus-monitor 0")
 return
 
-; Chrome toggle (moved from Caps+A to Caps+C)
+*F2::
+CapsLock2:=""
+if GetKeyState("Shift", "P")
+    Komorebic("move-to-monitor 1")
+else
+    Komorebic("focus-monitor 1")
+return
+
+; Chrome toggle
 c::
 CapsLock2:=""
 SetTitleMatchMode RegEx

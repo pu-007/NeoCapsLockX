@@ -12,12 +12,30 @@ else if (opMode == "visual")
 opMode:=""
 return
 
++h::
+spaceUsed:=1
+if (opMode == "delete")
+    Send +{Home}{Delete}
+else if (opMode == "visual")
+    Send +{Home}
+opMode:=""
+return
+
 l::
 spaceUsed:=1
 if (opMode == "delete")
     Send {Delete}
 else if (opMode == "visual")
     Send +{Right}
+opMode:=""
+return
+
++l::
+spaceUsed:=1
+if (opMode == "delete")
+    Send +{End}{Delete}
+else if (opMode == "visual")
+    Send +{End}
 opMode:=""
 return
 
@@ -121,15 +139,15 @@ spaceUsed:=1
 Send {Blind}{PgDn}
 return
 
-0::
+; Shift+H = Home, Shift+L = End (no Blind - Blind preserves Shift)
++h::
 spaceUsed:=1
-Send {Blind}{Home}
+Send {Home}
 return
 
-; Shift+4 ($) = End
-+4::
++l::
 spaceUsed:=1
-Send {Blind}{End}
+Send {End}
 return
 
 x::
@@ -140,13 +158,8 @@ else
     Send {Blind}{Delete}
 return
 
-; Shift+V = select line; V = visual mode or select line if already visual
-+v::
-spaceUsed:=1
-Send {Home}+{End}
-return
-
-v::
+; V = visual mode or select line if already visual
+*v::
 spaceUsed:=1
 if (opMode == "visual")
 {
@@ -159,8 +172,8 @@ else
 }
 return
 
-; d = delete mode or delete line if already in delete mode
-d::
+; d = delete mode or delete line
+*d::
 spaceUsed:=1
 if (opMode == "delete")
 {

@@ -1,54 +1,35 @@
-﻿; Mouse lock mode - CapsLock+Space toggle
-; WASD = move, Q = left click, E = right click, R/F = scroll
+﻿; Mouse callbacks + lock mode hotkeys
+; Uses original CapsLockX AccModel (AccModel.ahk) with Chinese method names
 
 DllCall("Shcore.dll\SetProcessDpiAwareness", "UInt", 2)
 
-global g_dpiRatio := A_ScreenDPI / 96
-global g_mouseSpeed := 1.0
-
-g_mouseModel := new AccModel2D(Func("mouseCallback"), 0.1, g_dpiRatio * 120 * 2 * g_mouseSpeed)
-g_scrollModel := new AccModel2D(Func("scrollCallback"), 0.1, g_dpiRatio * 120 * 4 * 1.0)
-g_mouseModel.maxSpeed := 200
-g_scrollModel.maxSpeed := 200
-
+; ==== Callback functions ====
 mouseCallback(dx, dy, state)
 {
-    global
-    if (state == "hMid" || state == "vMid")
+    if (state == "横中键" || state == "纵中键")
         return
-    if (state != "move")
+    if (state != "移动")
         return
     if (GetKeyState("Shift", "P")) {
         dx := dx == 0 ? 0 : (dx > 0 ? 1 : -1)
         dy := dy == 0 ? 0 : (dy > 0 ? 1 : -1)
     }
-    SendInput_MouseMove(dx, dy)
+    MouseMove, dx, dy, 0, R
 }
 
 scrollCallback(dx, dy, state)
 {
-    global
-    if (state == "hMid" || state == "vMid") {
+    if (state == "横中键" || state == "纵中键") {
         SendEvent {Blind}{MButton Down}
         KeyWait r
         KeyWait f
         SendEvent {Blind}{MButton Up}
-        g_scrollModel.stop()
+        g_scrollModel.止动()
         return
     }
-    if (state != "move")
+    if (state != "移动")
         return
     ScrollMouse(dx, dy)
-}
-
-SendInput_MouseMove(dx, dy)
-{
-    size := A_PtrSize + 4*4 + A_PtrSize*2
-    VarSetCapacity(buf, size, 0)
-    NumPut(dx, buf, A_PtrSize, "Int")
-    NumPut(dy, buf, A_PtrSize + 4, "Int")
-    NumPut(0x0001, buf, A_PtrSize + 4 + 4 + 4, "UInt")
-    DllCall("SendInput", "UInt", 1, "Ptr", &buf, "Int", size)
 }
 
 ScrollMouse(dx, dy)
@@ -75,19 +56,28 @@ ScrollMouse(dx, dy)
     }
 }
 
+; ==== Models (using original AccModel) ====
+global g_dpiRatio := A_ScreenDPI / 96
+global g_mouseSpeed := 1.0
+global g_mouseModel := new AccModel2D(Func("mouseCallback"), 0.1, g_dpiRatio * 120 * 2 * g_mouseSpeed)
+global g_scrollModel := new AccModel2D(Func("scrollCallback"), 0.1, g_dpiRatio * 120 * 4 * 1.0)
+g_mouseModel.最大速度 := 200
+g_scrollModel.最大速度 := 200
+
+; ==== Mouse lock mode hotkeys ====
 #If mouseLock
 
-w::g_mouseModel.upDown("w")
-w up::g_mouseModel.upUp()
+w::g_mouseModel.上按("w")
+w up::g_mouseModel.上放()
 
-a::g_mouseModel.leftDown("a")
-a up::g_mouseModel.leftUp()
+a::g_mouseModel.左按("a")
+a up::g_mouseModel.左放()
 
-s::g_mouseModel.downDown("s")
-s up::g_mouseModel.downUp()
+s::g_mouseModel.下按("s")
+s up::g_mouseModel.下放()
 
-d::g_mouseModel.rightDown("d")
-d up::g_mouseModel.rightUp()
+d::g_mouseModel.右按("d")
+d up::g_mouseModel.右放()
 
 q::
 Send {LButton Down}
@@ -101,10 +91,10 @@ KeyWait e
 Send {RButton Up}
 return
 
-r::g_scrollModel.upDown("r")
-r up::g_scrollModel.upUp()
+r::g_scrollModel.上按("r")
+r up::g_scrollModel.上放()
 
-f::g_scrollModel.downDown("f")
-f up::g_scrollModel.downUp()
+f::g_scrollModel.下按("f")
+f up::g_scrollModel.下放()
 
 #If

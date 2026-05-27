@@ -32,8 +32,8 @@ CapsLock2:=""
 return
 
 ; ==== Space: hold = edit modifier, tap = Space ====
-; Bypass: if Ctrl/Alt/Win held when Space is pressed, pass through
 $Space::
+; Ctrl/Alt/Win+Space → pass through (IME, etc.)
 if GetKeyState("Ctrl", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P")
 {
     Send {Blind}{Space Down}
@@ -41,21 +41,17 @@ if GetKeyState("Ctrl", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "
     Send {Blind}{Space Up}
     return
 }
-spaceMode:=1, spaceUsed:="", opMode:=""
-SetTimer, spaceHoldRepeat, -200
+spaceMode:=1, spaceUsed:="", opMode:="", spTap:=1
+SetTimer, spTapTimeout, -250
 KeyWait, Space
-SetTimer, spaceHoldRepeat, Off
+SetTimer, spTapTimeout, Off
 spaceMode:=""
-if !spaceUsed
+if !spaceUsed && spTap
     Send {Blind}{Space}
 return
 
-spaceHoldRepeat:
-; Space held >200ms with no edit key: auto-repeat spaces (mimics native key-repeat)
-if spaceMode && !spaceUsed {
-    Send {Blind}{Space}
-    SetTimer, spaceHoldRepeat, -50
-}
+spTapTimeout:
+spTap:=""
 return
 
 ; ==== Esc: toggle CapsLock indicator ($ prevents synthetic triggers) ====
