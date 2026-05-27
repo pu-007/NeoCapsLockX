@@ -173,4 +173,30 @@ else
 }
 return
 
+; Reload komorebi: Space+R / Space+Shift+R / Space+Ctrl+Shift+R
+r::
+spaceUsed:=1
+if GetKeyState("Ctrl", "P") && GetKeyState("Shift", "P")
+{
+    RunWait, taskkill /F /IM komorebi.exe,, Hide
+    RunWait, taskkill /F /IM yasb.exe,, Hide
+    RunWait, taskkill /F /IM explorer.exe,, Hide
+    Run, explorer.exe
+    Run, komorebic-no-console.exe start
+    Run, yasb.exe
+}
+else if GetKeyState("Shift", "P")
+{
+    RunWait, taskkill /F /IM komorebi.exe,, Hide
+    RunWait, taskkill /F /IM yasb.exe,, Hide
+    Run, komorebic-no-console.exe start
+    Run, yasb.exe
+}
+else
+{
+    RunWait, taskkill /F /IM komorebi.exe,, Hide
+    Run, komorebic-no-console.exe start
+}
+return
+
 #If

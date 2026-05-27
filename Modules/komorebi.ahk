@@ -1,4 +1,4 @@
-﻿; Komorebi window management — CapsLock hold + key
+﻿; Komorebi window management + mouse control — CapsLock hold + key
 
 Komorebic(cmd) {
     Run, komorebic.exe %cmd%,, Hide
@@ -6,6 +6,40 @@ Komorebic(cmd) {
 
 #If CapsLock && !mouseLock
 
+;=== Mouse control ===
+w::g_mouseModel.upDown("w"), CapsLock2:=""
+w up::g_mouseModel.upUp()
+
+a::g_mouseModel.leftDown("a"), CapsLock2:=""
+a up::g_mouseModel.leftUp()
+
+s::g_mouseModel.downDown("s"), CapsLock2:=""
+s up::g_mouseModel.downUp()
+
+d::g_mouseModel.rightDown("d"), CapsLock2:=""
+d up::g_mouseModel.rightUp()
+
+q::
+CapsLock2:=""
+Send {LButton Down}
+KeyWait q
+Send {LButton Up}
+return
+
+e::
+CapsLock2:=""
+Send {RButton Down}
+KeyWait e
+Send {RButton Up}
+return
+
+r::g_scrollModel.upDown("r"), CapsLock2:=""
+r up::g_scrollModel.upUp()
+
+f::g_scrollModel.downDown("f"), CapsLock2:=""
+f up::g_scrollModel.downUp()
+
+;=== Komorebi window management ===
 ; hjkl: focus / move
 h::
 j::
@@ -69,7 +103,7 @@ else
 CapsLock2:=""
 return
 
-f::Komorebic("toggle-monocle"), CapsLock2:=""
+g::Komorebic("toggle-monocle"), CapsLock2:=""
 t::Komorebic("toggle-float"), CapsLock2:=""
 
 z::
@@ -102,22 +136,17 @@ PgDn::Komorebic("cycle-layout next"), CapsLock2:=""
 x::
 if GetKeyState("Shift", "P")
     Komorebic("flip-layout x"), CapsLock2:=""
-else
-    return  ; x without Shift does nothing in komorebi mode
 return
 
 y::
 if GetKeyState("Shift", "P")
     Komorebic("flip-layout y"), CapsLock2:=""
-else
-    return
 return
 
 ; Stacks
 `;::Komorebic("cycle-stack previous"), CapsLock2:=""
 '::Komorebic("cycle-stack next"), CapsLock2:=""
 \::Komorebic("stack left"), CapsLock2:=""
-
 +\::Komorebic("unstack"), CapsLock2:=""
 
 ; Cycle focus/move
@@ -141,31 +170,8 @@ else
 CapsLock2:=""
 return
 
-; Reload
-r::
-if GetKeyState("Shift", "P") {
-    CapsLock2:=""
-    RunWait, taskkill /F /IM komorebi.exe,, Hide
-    RunWait, taskkill /F /IM yasb.exe,, Hide
-    Run, komorebic-no-console.exe start
-    Run, yasb.exe
-} else if GetKeyState("Ctrl", "P") && GetKeyState("Shift", "P") {
-    CapsLock2:=""
-    RunWait, taskkill /F /IM komorebi.exe,, Hide
-    RunWait, taskkill /F /IM yasb.exe,, Hide
-    RunWait, taskkill /F /IM explorer.exe,, Hide
-    Run, explorer.exe
-    Run, komorebic-no-console.exe start
-    Run, yasb.exe
-} else {
-    CapsLock2:=""
-    RunWait, taskkill /F /IM komorebi.exe,, Hide
-    Run, komorebic-no-console.exe start
-}
-return
-
-; Chrome toggle
-a::
+; Chrome toggle (moved from Caps+A to Caps+C)
+c::
 CapsLock2:=""
 SetTitleMatchMode RegEx
 DetectHiddenWindows On
