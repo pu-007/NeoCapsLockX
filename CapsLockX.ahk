@@ -2,12 +2,17 @@
 ; AHK v1, based on CapsLock+ / CapsLockX patterns
 #SingleInstance Force
 #NoEnv
+#Persistent
 #MaxHotkeysPerInterval 500
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 Process Priority,, High
 SetTitleMatchMode RegEx
 SetStoreCapslockMode, Off
+
+; ==== DIAGNOSTIC: confirm script loaded ====
+ToolTip % "[CLX STARTUP] CapsLockX loaded"
+SetTimer DiagStartupClear, -2000
 
 ; Global state
 global CapsLock := ""      ; CapsLock hold flag ("" = released, 1 = held)
@@ -16,6 +21,13 @@ global spaceMode := ""     ; Space hold flag
 global spaceUsed := ""     ; was an edit key used during Space hold
 global mouseLock := ""     ; CapsLock+Space toggle mouse lock
 global opMode := ""        ; vim operator: "delete" or "visual"
+
+; ==== Include modules (must be before first hotkey so auto-execute runs them) ====
+#Include %A_ScriptDir%\Modules\AccModel.ahk
+#Include %A_ScriptDir%\Modules\mouse.ahk
+#Include %A_ScriptDir%\Modules\edit.ahk
+#Include %A_ScriptDir%\Modules\komorebi.ahk
+#Include %A_ScriptDir%\Modules\extras.ahk
 
 ; ==== CapsLock: hold = komorebi modifier ====
 Capslock::
@@ -90,9 +102,7 @@ KeyWait, Space
 return
 #If
 
-; ==== Include modules ====
-#Include %A_ScriptDir%\Modules\AccModel.ahk
-#Include %A_ScriptDir%\Modules\mouse.ahk
-#Include %A_ScriptDir%\Modules\edit.ahk
-#Include %A_ScriptDir%\Modules\komorebi.ahk
-#Include %A_ScriptDir%\Modules\extras.ahk
+; ---- timer helpers ----
+DiagStartupClear:
+    ToolTip
+return
