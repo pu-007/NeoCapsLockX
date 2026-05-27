@@ -187,7 +187,7 @@ else
 return
 
 ; Reload komorebi: Space+R / Space+Shift+R / Space+Ctrl+Shift+R
-r::
+*r::
 spaceUsed:=1
 if GetKeyState("Ctrl", "P") && GetKeyState("Shift", "P")
 {

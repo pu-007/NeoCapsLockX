@@ -113,17 +113,6 @@ class AccModel2D
         this.动刻 := 现刻
         左时 := this._dt(this.左刻, 现刻), 右时 := this._dt(this.右刻, 现刻)
         上时 := this._dt(this.上刻, 现刻), 下时 := this._dt(this.下刻, 现刻)
-        ; 同时按下相当于中键（同时也会取消自动）
-        if (this.左刻 && this.右刻 && Abs(右时-左时) < this.中键间隔) {
-            this.实动函数.Call(this._sign(右时-左时), 0, "横中键")
-            this.止动()
-            return 1
-        }
-        if (this.上刻 && this.下刻 && Abs(下时-上时) < this.中键间隔) {
-            this.实动函数.Call(0, this._sign(下时-上时), "纵中键")
-            this.止动()
-            return 1
-        }
         ; 处理移动
         横加速 := this._ma(右时-左时) * this.横加速比率
         纵加速 := this._ma(下时-上时) * this.纵加速比率

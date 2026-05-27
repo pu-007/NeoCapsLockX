@@ -29,8 +29,16 @@ global opMode := ""        ; vim operator: "delete" or "visual"
 #Include %A_ScriptDir%\Modules\komorebi.ahk
 #Include %A_ScriptDir%\Modules\extras.ahk
 
-; ==== CapsLock: hold = komorebi modifier ====
+; ==== CapsLock: hold = komorebi modifier, tap in mouseLock = exit ====
 Capslock::
+if (mouseLock)
+{
+    mouseLock:=""
+    ToolTip Mouse Lock OFF
+    SetTimer HideToolTip, -1000
+    KeyWait, Capslock
+    return
+}
 CapsLock:=1, CapsLock2:=1
 SetTimer setCapsLock2, -300
 KeyWait, Capslock
@@ -43,8 +51,17 @@ setCapsLock2:
 CapsLock2:=""
 return
 
-; ==== Space: hold = edit modifier, tap = Space ====
+; ==== Space: hold = edit modifier, tap = Space, CapsLock+Space = mouse lock ====
 $Space::
+; CapsLock+Space = toggle mouse lock (handled here to avoid #If priority conflicts)
+if (CapsLock) {
+    mouseLock := !mouseLock
+    CapsLock2 := ""  ; suppress Esc on CapsLock release
+    ToolTip % "Mouse Lock " (mouseLock ? "ON" : "OFF")
+    SetTimer HideToolTip, -1000
+    KeyWait, Space
+    return
+}
 ; Ctrl/Alt/Win+Space → pass through (IME, etc.)
 if GetKeyState("Ctrl", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P")
 {
@@ -82,25 +99,6 @@ return
 HideToolTip:
 ToolTip
 return
-
-; ==== CapsLock+Space = toggle mouse lock mode ====
-#If CapsLock && !mouseLock
-Space::
-mouseLock:=1, CapsLock2:=""
-ToolTip Mouse Lock ON
-SetTimer HideToolTip, -1000
-KeyWait, Space
-return
-#If
-
-#If CapsLock && mouseLock
-Space::
-mouseLock:="", CapsLock2:=""
-ToolTip Mouse Lock OFF
-SetTimer HideToolTip, -1000
-KeyWait, Space
-return
-#If
 
 ; ---- timer helpers ----
 DiagStartupClear:

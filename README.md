@@ -8,24 +8,16 @@ AHK v1. Run: `.\AutoHotkey\AutoHotkeyU64.exe CapsLockX.ahk`
 
 | Trigger | Layer |
 |----------|-------|
-| `CapsLock` hold | Window management + Mouse |
+| `CapsLock` hold | Window management |
 | `Space` hold | Text editing + Reload |
 | `CapsLock+Space` chord | Toggle mouse lock mode |
-| `Esc` | Toggle CapsLock indicator |
-| `CapsLock` tap | Send Esc |
+| `CapsLock` tap | Send Esc (outside mouse lock) |
+| `CapsLock` press | Exit mouse lock mode |
+| `Esc` | Exit mouse lock / toggle CapsLock indicator |
 
 ---
 
-## CapsLock — Window + Mouse
-
-### Mouse
-| Key | Action |
-|-----|--------|
-| `Caps+W/A/S/D` | Mouse move (accelerated) |
-| `Caps+Q` | Left click |
-| `Caps+E` | Right click |
-| `Caps+R/F` | Scroll up/down |
-| `Caps+R+F` | Middle click |
+## CapsLock — Window Management
 
 ### Focus & Move
 | Key | Action |
@@ -85,50 +77,65 @@ AHK v1. Run: `.\AutoHotkey\AutoHotkeyU64.exe CapsLockX.ahk`
 
 ## Space — Edit + Reload
 
-### Cursor
+### Cursor (Space hold)
 | Key | Action |
 |-----|--------|
-| `Space+H/J/K/L` | Arrow keys |
-| `Space+W/B` | Next/prev word |
-| `Space+Y/O` | PgUp/PgDn |
-| `Space+0` | Home |
-| `Space+$` (Shift+4) | End |
+| `Space+H/J/K/L` | Arrow keys (Left/Down/Up/Right) |
+| `Space+W/B` | Next/prev word (Ctrl+Right/Left) |
+| `Space+Y/O` | PgUp / PgDn |
+| `Space+Shift+H` | Home |
+| `Space+Shift+L` | End |
+| `Space+X` | Delete (forward) |
+| `Space+Shift+X` | Delete entire line |
 
 ### Vim Operators
-| Sequence | Action |
-|----------|--------|
-| `Space+X` | Delete forward |
-| `Space+Shift+X` | Delete line |
-| `Space+Shift+V` | Select line |
-| `Space+V` | Enter visual mode |
-| `Space+V` + `V` again | Select line |
-| `Space+V` + `W` | Select next word |
-| `Space+V` + `B` | Select prev word |
-| `Space+V` + `H/J/K/L` | Select char/line |
-| `Space+D` | Enter delete mode |
-| `Space+D` + `D` | Delete line |
-| `Space+D` + `W` | Delete next word |
-| `Space+D` + `B` | Delete prev word |
+After pressing `Space+V` (visual mode) or `Space+D` (delete mode):
 
-### Reload
+| Motion | Visual (select) | Delete |
+|--------|-----------------|--------|
+| `H` | Select left 1 char | Backspace |
+| `L` | Select right 1 char | Delete |
+| `Shift+H` | Select to line start | Delete to line start |
+| `Shift+L` | Select to line end | Delete to line end |
+| `J` / `K` | Select line down/up | — |
+| `W` | Select next word | Delete next word |
+| `B` | Select prev word | Delete prev word |
+| `0` | Select to line start | Delete to line start |
+| `$` (Shift+4) | Select to line end | Delete to line end |
+| `V` (again) | Select entire line | — |
+| `D` (again) | — | Delete entire line |
+
+### Reload komorebi
 | Key | Action |
 |-----|--------|
-| `Space+R` | Reload komorebi |
-| `Space+Shift+R` | Reload komorebi + yasb |
-| `Space+Ctrl+Shift+R` | Reload komorebi + yasb + explorer |
+| `Space+R` | Restart komorebi |
+| `Space+Shift+R` | Restart komorebi + yasb |
+| `Space+Ctrl+Shift+R` | Restart komorebi + yasb + explorer |
 
 ---
 
 ## CapsLock+Space — Mouse Lock
 
-Toggle with CapsLock+Space chord. Esc exits.
+Toggle with `CapsLock+Space`. Press `CapsLock` (or `Esc`) to exit.
+
+While mouse lock is ON:
 
 | Key | Action |
 |-----|--------|
-| `W/A/S/D` | Mouse move |
-| `Q/E` | Left/right click |
-| `R/F` | Scroll up/down |
-| `Shift+WASD` | Slow move |
+| `W/A/S/D` | Mouse move (accelerated, hold for speed) |
+| `Q` | Left click (hold-to-drag) |
+| `E` | Right click (hold-to-drag) |
+| `R` | Scroll up (accelerated) |
+| `F` | Scroll down (accelerated) |
+| `Shift+WASD` | Slow/precise move (1px per tick) |
+
+No middle click — removed to avoid accidental triggers.
+
+### Speed Tuning
+Edit `Modules\mouse.ahk`:
+- `g_mouseSpeed` (default 1.0) — mouse cursor speed
+- `g_scrollSpeed` (default 1.0) — scroll wheel speed
+- Higher = faster; try 0.5 for slower, 2.0 for faster
 
 ---
 

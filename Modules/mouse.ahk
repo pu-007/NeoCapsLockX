@@ -12,13 +12,6 @@ global g_mouseDebug := 0
 mouseCallback(dx, dy, state)
 {
     global g_mouseDebug
-    ; Guard: stop simulation if CapsLock is released (matching original behavior)
-    if (!CapsLock) {
-        g_mouseModel.止动()
-        return
-    }
-    if (state == "横中键" || state == "纵中键")
-        return
     if (state != "移动")
         return
     if (GetKeyState("Shift", "P")) {
@@ -38,14 +31,6 @@ mouseCallback(dx, dy, state)
 
 scrollCallback(dx, dy, state)
 {
-    if (state == "横中键" || state == "纵中键") {
-        SendEvent {Blind}{MButton Down}
-        KeyWait r
-        KeyWait f
-        SendEvent {Blind}{MButton Up}
-        g_scrollModel.止动()
-        return
-    }
     if (state != "移动")
         return
     ScrollMouse(dx, dy)
@@ -92,13 +77,19 @@ ScrollMouse(dx, dy)
 ; ==== Models (using original AccModel) ====
 global g_dpiRatio := A_ScreenDPI / 96
 global g_mouseSpeed := 1.0
+global g_scrollSpeed := 1.0
 global g_mouseModel := new AccModel2D(Func("mouseCallback"), 0.1, g_dpiRatio * 120 * 2 * g_mouseSpeed)
-global g_scrollModel := new AccModel2D(Func("scrollCallback"), 0.1, g_dpiRatio * 120 * 4 * 1.0)
+global g_scrollModel := new AccModel2D(Func("scrollCallback"), 0.1, g_dpiRatio * 50 * g_scrollSpeed)
 ; NOTE: No maxSpeed cap — matches original CLX-Mouse.ahk behavior.
 ; The AccModel's _ma() produces exponential acceleration, and velocity
 ; grows continuously. Capping it kills the acceleration feel.
 ; To limit max speed, set a higher value e.g.:
 ; g_mouseModel.最大速度 := 2000
+; g_scrollModel.最大速度 := 500
+;
+; Speed tuning (higher = faster):
+;   g_mouseSpeed  : mouse cursor movement rate (default 1.0)
+;   g_scrollSpeed : scroll wheel rate (default 1.0, try 0.5 for slower)
 
 ; ==== Mouse lock mode hotkeys ====
 ; NOTE: * prefix (wildcard) is essential — it allows the hotkey to fire even when
