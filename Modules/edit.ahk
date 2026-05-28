@@ -1,7 +1,7 @@
 ﻿; Text editing - Space hold + vim-like keys
 
 ; Operator-pending mode (after d/v pressed) - must come first for priority
-#If spaceMode && !mouseLock && opMode
+#If spaceMode && !capsLockActive && opMode
 
 h::
 spaceUsed:=1
@@ -97,7 +97,7 @@ return
 #If
 
 ; Normal edit mode
-#If spaceMode && !mouseLock
+#If spaceMode && !capsLockActive
 
 h::
 spaceUsed:=1

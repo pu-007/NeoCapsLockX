@@ -1,4 +1,4 @@
-﻿# CapsLockX
+# CapsLockX
 
 CapsLock enhancement + komorebi window management + mouse control + vim-like editing.
 
@@ -8,98 +8,99 @@ AHK v1. Run: `.\AutoHotkey\AutoHotkeyU64.exe CapsLockX.ahk`
 
 | Trigger | Layer |
 |----------|-------|
-| `CapsLock` hold | Window management |
+| `CapsLock` hold | Window + Mouse (no toggle needed) |
+| `CapsLock+Space` | Toggle full mode (mouse + window, no holding required) |
+| `CapsLock` tap | Exit full mode / Send Esc |
 | `Space` hold | Text editing + Reload |
-| `CapsLock+Space` chord | Toggle mouse lock mode |
-| `CapsLock` tap | Send Esc (outside mouse lock) |
-| `CapsLock` press | Exit mouse lock mode |
-| `Esc` | Exit mouse lock / toggle CapsLock indicator |
+| `Esc` | Exit full mode / toggle CapsLock indicator |
 
 ---
 
-## CapsLock — Window + Mouse
+## CapsLock - Window + Mouse
 
-Hold CapsLock for quick mouse control (no toggle needed):
+**Two ways to activate:**
+- **Toggle ON** (`CapsLock+Space`): All keys below work freely without holding CapsLock. Press `CapsLock` to exit.
+- **Hold CapsLock**: Quick access, release CapsLock to exit.
 
-### Mouse (CapsLock hold)
+### Mouse
 | Key | Action |
 |-----|--------|
-| `Caps+W/A/S/D` | Mouse move (accelerated) |
-| `Caps+Shift+WASD` | Slow/precise move (1px per tick) |
-| `Caps+Q/E` | Left/right click |
-| `Caps+R/F` | Scroll up/down |
+| `W/A/S/D` | Mouse move (accelerated) |
+| `Shift+WASD` | Slow/precise move |
+| `Q/E` | Left/right click (hold to drag) |
+| `R/F` | Scroll up/down (accelerated) |
 
 ### Focus & Move
 | Key | Action |
 |-----|--------|
-| `Caps+H/J/K/L` | Focus window left/down/up/right |
-| `Caps+Shift+H/J/K/L` | Move window |
+| `H/J/K/L` | Focus window left/down/up/right |
+| `Shift+H/J/K/L` | Move window |
 
 ### Workspace
 | Key | Action |
 |-----|--------|
-| `Caps+1~9` | Switch workspace |
-| `Caps+Shift+1~9` | Move window to workspace |
+| `1~9` | Switch workspace |
+| `Shift+1~9` | Move window to workspace |
 
 ### Monitor
 | Key | Action |
 |-----|--------|
-| `Caps+F1/F2` | Focus monitor 0/1 |
-| `Caps+Shift+F1/F2` | Move window to monitor 0/1 |
+| `F1/F2` | Focus monitor 0/1 |
+| `Shift+F1/F2` | Move window to monitor 0/1 |
 
 ### Window Ops
 | Key | Action |
 |-----|--------|
-| `Caps+Z` | Close window |
-| `Caps+Shift+Z` | Kill process |
-| `Caps+T` | Toggle float |
-| `Caps+G` | Toggle monocle |
-| `Caps+M` | Toggle maximize |
-| `Caps+Shift+M` | Minimize |
-| `Caps+P` | Promote |
-| `Caps+Shift+P` | Toggle pause |
-| `Caps+C` | Toggle Chrome visibility |
+| `Z` | Close window |
+| `Shift+Z` | Kill process |
+| `T` | Toggle float |
+| `G` | Toggle monocle |
+| `M` | Toggle maximize |
+| `Shift+M` | Minimize |
+| `P` | Promote |
+| `Shift+P` | Toggle pause |
+| `C` | Toggle Chrome visibility |
 
 ### Resize
 | Key | Action |
 |-----|--------|
-| `Caps+=/-` | Resize horizontal |
-| `Caps+Shift+=/-` | Resize vertical |
-| `Caps+Shift+Arrows` | Resize edge |
+| `=/-` | Resize horizontal |
+| `Shift+=/-` | Resize vertical |
+| `Shift+Arrows` | Resize edge |
 
 ### Layout
 | Key | Action |
 |-----|--------|
-| `Caps+,/./` | Vertical-stack / bsp / ultrawide |
-| `Caps+Shift+,/./` | Right-main / grid / horizontal |
-| `Caps+PgUp/PgDn` | Cycle layout |
-| `Caps+Shift+X/Y` | Flip layout |
+| `,/.//` | Vertical-stack / bsp / ultrawide |
+| `Shift+,/./` | Right-main / grid / horizontal |
+| `PgUp/PgDn` | Cycle layout |
+| `Shift+X/Y` | Flip layout |
 
 ### Stack & Cycle
 | Key | Action |
 |-----|--------|
-| `Caps+;/'` | Cycle stack |
-| `Caps+\` | Stack / Unstack (with Shift) |
-| `Caps+[/]` | Cycle focus |
-| `Caps+Shift+[/]` | Cycle move |
+| `;/'` | Cycle stack |
+| `\` | Stack / Unstack (with Shift) |
+| `[/]` | Cycle focus |
+| `Shift+[/]` | Cycle move |
 
 ---
 
-## Space — Edit + Reload
+## Space - Edit + Reload
 
 ### Cursor (Space hold)
 | Key | Action |
 |-----|--------|
-| `Space+H/J/K/L` | Arrow keys (Left/Down/Up/Right) |
-| `Space+W/B` | Next/prev word (Ctrl+Right/Left) |
-| `Space+Y/O` | PgUp / PgDn |
-| `Space+Shift+H` | Home |
-| `Space+Shift+L` | End |
-| `Space+X` | Delete (forward) |
-| `Space+Shift+X` | Delete entire line |
+| `H/J/K/L` | Arrow keys (Left/Down/Up/Right) |
+| `W/B` | Next/prev word (Ctrl+Right/Left) |
+| `Y/O` | PgUp / PgDn |
+| `Shift+H` | Home |
+| `Shift+L` | End |
+| `X` | Delete (forward) |
+| `Shift+X` | Delete entire line |
 
 ### Vim Operators
-After pressing `Space+V` (visual mode) or `Space+D` (delete mode):
+After pressing `V` (visual) or `D` (delete) while Space is held:
 
 | Motion | Visual (select) | Delete |
 |--------|-----------------|--------|
@@ -107,45 +108,27 @@ After pressing `Space+V` (visual mode) or `Space+D` (delete mode):
 | `L` | Select right 1 char | Delete |
 | `Shift+H` | Select to line start | Delete to line start |
 | `Shift+L` | Select to line end | Delete to line end |
-| `J` / `K` | Select line down/up | — |
+| `J` / `K` | Select line down/up | - |
 | `W` | Select next word | Delete next word |
 | `B` | Select prev word | Delete prev word |
 | `0` | Select to line start | Delete to line start |
-| `$` (Shift+4) | Select to line end | Delete to line end |
-| `V` (again) | Select entire line | — |
-| `D` (again) | — | Delete entire line |
+| `Shift+4` ($) | Select to line end | Delete to line end |
+| `V` (again) | Select entire line | - |
+| `D` (again) | - | Delete entire line |
 
 ### Reload komorebi
 | Key | Action |
 |-----|--------|
-| `Space+R` | Restart komorebi |
-| `Space+Shift+R` | Restart komorebi + yasb |
-| `Space+Ctrl+Shift+R` | Restart komorebi + yasb + explorer |
+| `R` | Restart komorebi |
+| `Shift+R` | Restart komorebi + yasb |
+| `Ctrl+Shift+R` | Restart komorebi + yasb + explorer |
 
 ---
 
-## CapsLock+Space — Mouse Lock
-
-Toggle with `CapsLock+Space`. Press `CapsLock` (or `Esc`) to exit.
-
-While mouse lock is ON:
-
-| Key | Action |
-|-----|--------|
-| `W/A/S/D` | Mouse move (accelerated, hold for speed) |
-| `Q` | Left click (hold-to-drag) |
-| `E` | Right click (hold-to-drag) |
-| `R` | Scroll up (accelerated) |
-| `F` | Scroll down (accelerated) |
-| `Shift+WASD` | Slow/precise move (1px per tick) |
-
-No middle click — removed to avoid accidental triggers.
-
-### Speed Tuning
+## Speed Tuning
 Edit `Modules\mouse.ahk`:
-- `g_mouseSpeed` (default 1.0) — mouse cursor speed
-- `g_scrollSpeed` (default 1.0) — scroll wheel speed
-- Higher = faster; try 0.5 for slower, 2.0 for faster
+- `g_mouseSpeed` (default 1.0) - mouse cursor speed
+- `g_scrollSpeed` (default 1.0) - scroll wheel speed
 
 ---
 

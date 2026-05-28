@@ -19,7 +19,7 @@ global CapsLock := ""      ; CapsLock hold flag ("" = released, 1 = held)
 global CapsLock2 := ""     ; tap detection: set on press, cleared by timer or hotkey
 global spaceMode := ""     ; Space hold flag
 global spaceUsed := ""     ; was an edit key used during Space hold
-global mouseLock := ""     ; CapsLock+Space toggle mouse lock
+global capsLockActive := ""     ; CapsLock+Space toggle CapsLock Active
 global opMode := ""        ; vim operator: "delete" or "visual"
 
 ; ==== Include modules (must be before first hotkey so auto-execute runs them) ====
@@ -29,12 +29,12 @@ global opMode := ""        ; vim operator: "delete" or "visual"
 #Include %A_ScriptDir%\Modules\komorebi.ahk
 #Include %A_ScriptDir%\Modules\extras.ahk
 
-; ==== CapsLock: hold = komorebi modifier, tap in mouseLock = exit ====
+; ==== CapsLock: hold = komorebi modifier, tap in capsLockActive = exit ====
 Capslock::
-if (mouseLock)
+if (capsLockActive)
 {
-    mouseLock:=""
-    ToolTip Mouse Lock OFF
+    capsLockActive:=""
+    ToolTip CapsLock Active OFF
     SetTimer HideToolTip, -1000
     KeyWait, Capslock
     return
@@ -51,13 +51,13 @@ setCapsLock2:
 CapsLock2:=""
 return
 
-; ==== Space: hold = edit modifier, tap = Space, CapsLock+Space = mouse lock ====
+; ==== Space: hold = edit modifier, tap = Space, CapsLock+Space = CapsLock Active ====
 $Space::
-; CapsLock+Space = toggle mouse lock (handled here to avoid #If priority conflicts)
+; CapsLock+Space = toggle CapsLock Active (handled here to avoid #If priority conflicts)
 if (CapsLock) {
-    mouseLock := !mouseLock
+    capsLockActive := !capsLockActive
     CapsLock2 := ""  ; suppress Esc on CapsLock release
-    ToolTip % "Mouse Lock " (mouseLock ? "ON" : "OFF")
+    ToolTip % "CapsLock Active " (capsLockActive ? "ON" : "OFF")
     SetTimer HideToolTip, -1000
     KeyWait, Space
     return
@@ -85,10 +85,10 @@ return
 
 ; ==== Esc: toggle CapsLock indicator ($ prevents synthetic triggers) ====
 $Esc::
-if mouseLock
+if capsLockActive
 {
-    mouseLock:=""
-    ToolTip Mouse Lock OFF
+    capsLockActive:=""
+    ToolTip CapsLock Active OFF
     SetTimer HideToolTip, -1000
     return
 }

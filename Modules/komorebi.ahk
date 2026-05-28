@@ -1,10 +1,13 @@
-﻿; Komorebi window management + mouse control - CapsLock hold + key
+﻿; Komorebi window management + mouse control
+; Active when: CapsLock held, OR capsLockActive toggle ON (CapsLock+Space)
+; No need to hold CapsLock - toggle ON then use all keys freely
+
 
 Komorebic(cmd) {
     Run, komorebic.exe %cmd%,, Hide
 }
 
-#If CapsLock && !mouseLock
+#If (CapsLock || capsLockActive)
 
 ;=== Mouse control ===
 *w::

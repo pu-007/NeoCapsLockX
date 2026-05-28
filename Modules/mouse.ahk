@@ -22,7 +22,7 @@ mouseCallback(dx, dy, state)
     static _diagCount := 0
     _diagCount++
     if (g_mouseDebug && Mod(_diagCount, 30) == 0) {
-        ToolTip % "[mouseCallback] dx=" dx ", dy=" dy ", 横速=" g_mouseModel.横速 ", 纵速=" g_mouseModel.纵速
+        ToolTip % "[mouseCallback] dx=" dx ", dy=" dy ", 横速=" g_mouseModel.横速, 纵速=" g_mouseModel.纵速"
         SetTimer HideMouseDiag, -1000
     }
     ; Use Windows SendInput API (matches original CLX-Mouse.ahk, 64-bit safe)
@@ -91,16 +91,16 @@ global g_scrollModel := new AccModel2D(Func("scrollCallback"), 0.1, g_dpiRatio *
 ;   g_mouseSpeed  : mouse cursor movement rate (default 1.0)
 ;   g_scrollSpeed : scroll wheel rate (default 1.0, try 0.5 for slower)
 
-; ==== Mouse lock mode hotkeys ====
+; ==== CapsLock Active mode hotkeys ====
 ; NOTE: * prefix (wildcard) is essential — it allows the hotkey to fire even when
 ; CapsLock is physically held and intercepted by the keyboard hook.
 ; Without *, the hook may treat the held CapsLock as a "modifier" and suppress
 ; plain hotkey matching. This matches the original CLX-Mouse.ahk behavior.
-#If mouseLock
+#If capsLockActive
 
 *w::
     if (g_mouseDebug)
-        ToolTip % "[HOTKEY] *w pressed — CapsLock=" CapsLock ", mouseLock=" mouseLock
+        ToolTip % "[HOTKEY] *w pressed — CapsLock=" CapsLock ", capsLockActive=" capsLockActive
     g_mouseModel.上按("w")
 return
 *w up::g_mouseModel.上放()
