@@ -7,65 +7,65 @@ Komorebic(cmd) {
 #If CapsLock && !mouseLock
 
 ;=== Mouse control ===
-$w::
+*w::
 g_mouseModel.上按("w")
 CapsLock2:=""
 return
-$w up::
+*w up::
 g_mouseModel.上放()
 return
 
-$a::
+*a::
 g_mouseModel.左按("a")
 CapsLock2:=""
 return
-$a up::
+*a up::
 g_mouseModel.左放()
 return
 
-$s::
+*s::
 g_mouseModel.下按("s")
 CapsLock2:=""
 return
-$s up::
+*s up::
 g_mouseModel.下放()
 return
 
-$d::
+*d::
 g_mouseModel.右按("d")
 CapsLock2:=""
 return
-$d up::
+*d up::
 g_mouseModel.右放()
 return
 
-q::
+*q::
 CapsLock2:=""
 Send {LButton Down}
 KeyWait q
 Send {LButton Up}
 return
 
-e::
+*e::
 CapsLock2:=""
 Send {RButton Down}
 KeyWait e
 Send {RButton Up}
 return
 
-$r::
+*r::
 g_scrollModel.上按("r")
 CapsLock2:=""
 return
-$r up::
+*r up::
 g_scrollModel.上放()
 return
 
-$f::
+*f::
 g_scrollModel.下按("f")
 CapsLock2:=""
 return
-$f up::
+*f up::
 g_scrollModel.下放()
 return
 

@@ -17,7 +17,17 @@ AHK v1. Run: `.\AutoHotkey\AutoHotkeyU64.exe CapsLockX.ahk`
 
 ---
 
-## CapsLock — Window Management
+## CapsLock — Window + Mouse
+
+Hold CapsLock for quick mouse control (no toggle needed):
+
+### Mouse (CapsLock hold)
+| Key | Action |
+|-----|--------|
+| `Caps+W/A/S/D` | Mouse move (accelerated) |
+| `Caps+Shift+WASD` | Slow/precise move (1px per tick) |
+| `Caps+Q/E` | Left/right click |
+| `Caps+R/F` | Scroll up/down |
 
 ### Focus & Move
 | Key | Action |
