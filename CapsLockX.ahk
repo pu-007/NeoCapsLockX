@@ -27,6 +27,7 @@ global opMode := ""        ; vim operator: "delete" or "visual"
 #Include %A_ScriptDir%\Modules\mouse.ahk
 #Include %A_ScriptDir%\Modules\edit.ahk
 #Include %A_ScriptDir%\Modules\komorebi.ahk
+#Include %A_ScriptDir%\Modules\coordgrid.ahk
 #Include %A_ScriptDir%\Modules\extras.ahk
 
 ; ==== CapsLock: hold = komorebi modifier, tap in capsLockActive = exit ====
