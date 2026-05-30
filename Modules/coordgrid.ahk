@@ -18,6 +18,12 @@ return
 
 #If
 
+; Pre-warm: build GUI in background on script start to avoid first-use black flash
+CoordGrid_StartupWarm:
+    CoordGrid_Init()
+    CoordGrid_Build()
+return
+
 ; ==== Lazy global init ====
 CoordGrid_Init() {
     global
@@ -67,6 +73,7 @@ CoordGrid_Build() {
     } Until rowCounter = CoordGrid_Rows
 
     Gui, CoordGrid:Show, Hide W%CoordGrid_GridW% H%CoordGrid_GridH%, CoordGrid
+    WinSet, TransColor, 000115, CoordGrid
     CoordGrid_Built := true
 }
 
@@ -88,8 +95,8 @@ CoordGrid_Show() {
     capsLockActive := ""
     coordGridCaptureActive := true
     CoordGrid_Visible := true
-    Gui, CoordGrid:Show
     WinSet, TransColor, 000115, CoordGrid
+    Gui, CoordGrid:Show
 }
 
 CoordGrid_Hide() {
@@ -243,4 +250,7 @@ CoordGrid_Navigate() {
     CoordGrid_Hide()
     MouseMove, % xCoord, % yCoord, 0
     DllCall("SystemParametersInfo", "UInt", 0x0057, "UInt", 0, "UInt", 0, "UInt", 0)
+    Sleep, 30
+    MouseMove, 1, 0, 0, R
+    MouseMove, -1, 0, 0, R
 }

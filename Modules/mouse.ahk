@@ -91,6 +91,9 @@ global g_scrollModel := new AccModel2D(Func("scrollCallback"), 0.1, g_dpiRatio *
 ;   g_mouseSpeed  : mouse cursor movement rate (default 1.0)
 ;   g_scrollSpeed : scroll wheel rate (default 1.0, try 0.5 for slower)
 
+; Pre-build CoordGrid GUI in background to avoid first-use black flash
+SetTimer, CoordGrid_StartupWarm, -500
+
 ; ==== CapsLock Active mode hotkeys ====
 ; NOTE: * prefix (wildcard) is essential — it allows the hotkey to fire even when
 ; CapsLock is physically held and intercepted by the keyboard hook.
