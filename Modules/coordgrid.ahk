@@ -42,7 +42,7 @@ CoordGrid_Init() {
 
 ; ==== Grid GUI ====
 CoordGrid_Build() {
-    global CoordGrid_Rows, CoordGrid_Cols, CoordGrid_RowSp, CoordGrid_ColSp, CoordGrid_Keys, CoordGrid_GridW, CoordGrid_GridH, CoordGrid_Built
+    global
     if (CoordGrid_Built)
         return
 
@@ -59,8 +59,8 @@ CoordGrid_Build() {
             colX := Round(colCounter * CoordGrid_ColSp)
             colAlpha := CoordGrid_Keys[colCounter + 1]
             StringUpper, colAlpha, colAlpha
-            Gui, CoordGrid:Add, Progress, % "w21 h21 x" . colX . " y" . rowY . " BackgroundFFFFFF disabled"
-            Gui, CoordGrid:Add, Text, % "w21 h21 x" . colX . " y" . rowY . " Border 0x201 ReadOnly BackgroundTrans cBlack", % colAlpha . rowAlpha
+            Gui, CoordGrid:Add, Progress, % "w21 h21 x" . colX . " y" . rowY . " BackgroundFFFFFF disabled vCG_p_" . colCounter . "_" . rowCounter
+            Gui, CoordGrid:Add, Text, % "w21 h21 x" . colX . " y" . rowY . " Border 0x201 ReadOnly BackgroundTrans cBlack vCG_t_" . colCounter . "_" . rowCounter, % colAlpha . rowAlpha
             colCounter += 1
         } Until colCounter = CoordGrid_Cols
         rowCounter += 1
@@ -83,6 +83,7 @@ CoordGrid_Toggle() {
 CoordGrid_Show() {
     global CoordGrid_Visible, coordGridCaptureActive, CapsLock, capsLockActive
     CoordGrid_Build()
+    CoordGrid_ResetCells()
     CapsLock := ""
     capsLockActive := ""
     coordGridCaptureActive := true
@@ -97,6 +98,52 @@ CoordGrid_Hide() {
     CapsLock := ""
     CoordGrid_Visible := false
     Gui, CoordGrid:Hide
+}
+
+CoordGrid_ResetCells() {
+    global CoordGrid_Cols, CoordGrid_Rows, CoordGrid_Keys
+    Gui, CoordGrid:Hide
+    r := 0
+    Loop, %CoordGrid_Rows% {
+        rowLetter := CoordGrid_Keys[r + 1]
+        StringUpper, rowLetter, rowLetter
+        c := 0
+        Loop, %CoordGrid_Cols% {
+            colLetter := CoordGrid_Keys[c + 1]
+            StringUpper, colLetter, colLetter
+            GuiControl, CoordGrid:Show, % "CG_p_" c "_" r
+            GuiControl, CoordGrid:Text, % "CG_t_" c "_" r, % colLetter . rowLetter
+            GuiControl, CoordGrid:Show, % "CG_t_" c "_" r
+            c += 1
+        }
+        r += 1
+    }
+    Gui, CoordGrid:Show, NA
+}
+
+CoordGrid_HighlightColumn(colKey) {
+    global CoordGrid_Cols, CoordGrid_Rows, CoordGrid_Keys
+    Gui, CoordGrid:Hide
+    colIdx := Asc(colKey) - 97
+    r := 0
+    Loop, %CoordGrid_Rows% {
+        rowLetter := CoordGrid_Keys[r + 1]
+        StringUpper, rowLetter, rowLetter
+        c := 0
+        Loop, %CoordGrid_Cols% {
+            if (c = colIdx) {
+                GuiControl, CoordGrid:Show, % "CG_p_" c "_" r
+                GuiControl, CoordGrid:Text, % "CG_t_" c "_" r, % rowLetter
+                GuiControl, CoordGrid:Show, % "CG_t_" c "_" r
+            } else {
+                GuiControl, CoordGrid:Hide, % "CG_p_" c "_" r
+                GuiControl, CoordGrid:Hide, % "CG_t_" c "_" r
+            }
+            c += 1
+        }
+        r += 1
+    }
+    Gui, CoordGrid:Show, NA
 }
 
 ; ==== Grid-active hotkeys (gated by coordGridCaptureActive flag) ====
@@ -161,6 +208,7 @@ CoordGrid_HandleKey(key) {
     if (CoordGrid_TapCount = 0) {
         CoordGrid_TapCount := 1
         CoordGrid_FirstKey := key
+        CoordGrid_HighlightColumn(key)
         SetTimer, CoordGrid_ResetTap, -3000
         return
     }
@@ -171,6 +219,7 @@ CoordGrid_HandleKey(key) {
 
 CoordGrid_ResetTap:
     CoordGrid_TapCount := 0
+    CoordGrid_ResetCells()
 return
 
 CoordGrid_Move(dx, dy) {
