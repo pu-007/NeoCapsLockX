@@ -8,6 +8,8 @@
 ; All globals are lazily initialized in CoordGrid_Init() because the
 ; auto-execute section terminates at the first hotkey in mouse.ahk.
 
+SetStoreCapslockMode, Off
+
 ; ==== Trigger: CapsLock (held or latched) + backtick ====
 #If (CapsLock || capsLockActive)
 
@@ -18,7 +20,8 @@ return
 
 #If
 
-; Pre-warm: build GUI in background on script start to avoid first-use black flash
+; Pre-warm: build GUI hidden on script start.
+; TransColor is applied before any Show to prevent the black-flash on first display.
 CoordGrid_StartupWarm:
     CoordGrid_Init()
     CoordGrid_Build()
@@ -47,12 +50,13 @@ CoordGrid_Init() {
 }
 
 ; ==== Grid GUI ====
+; +LastFound: allows WinSet to target this GUI before it is shown.
 CoordGrid_Build() {
     global
     if (CoordGrid_Built)
         return
 
-    Gui, CoordGrid:New, +AlwaysOnTop -Caption +ToolWindow
+    Gui, CoordGrid:New, +AlwaysOnTop -Caption +ToolWindow +LastFound
     Gui, CoordGrid:Color, 000115
 
     rowCounter := 0
@@ -73,7 +77,8 @@ CoordGrid_Build() {
     } Until rowCounter = CoordGrid_Rows
 
     Gui, CoordGrid:Show, Hide W%CoordGrid_GridW% H%CoordGrid_GridH%, CoordGrid
-    WinSet, TransColor, 000115, CoordGrid
+    Gui, CoordGrid:+LastFound
+    WinSet, TransColor, 000115
     CoordGrid_Built := true
 }
 
@@ -88,23 +93,33 @@ CoordGrid_Toggle() {
 }
 
 CoordGrid_Show() {
-    global CoordGrid_Visible, coordGridCaptureActive, CapsLock, capsLockActive
+    Critical
+    global CoordGrid_Visible, coordGridCaptureActive, CapsLock, capsLockActive, CapsLock2
     CoordGrid_Build()
-    CoordGrid_ResetCells()
+    CapsLock2 := ""
     CapsLock := ""
     capsLockActive := ""
     coordGridCaptureActive := true
     CoordGrid_Visible := true
-    WinSet, TransColor, 000115, CoordGrid
-    Gui, CoordGrid:Show
+    CoordGrid_Redraw()
 }
 
 CoordGrid_Hide() {
-    global CoordGrid_Visible, coordGridCaptureActive, CapsLock
+    global CoordGrid_Visible, coordGridCaptureActive, CapsLock, CapsLock2
+    SetTimer, CoordGrid_ResetTap, Off
     coordGridCaptureActive := false
+    CapsLock2 := ""
     CapsLock := ""
     CoordGrid_Visible := false
+    CoordGrid_TapCount := 0
     Gui, CoordGrid:Hide
+}
+
+; Helper: apply TransColor after GUI has been shown (matching original AHKCoordGrid flow).
+CoordGrid_Redraw() {
+    CoordGrid_ResetCells()
+    Gui, CoordGrid:+LastFound
+    WinSet, TransColor, 000115
 }
 
 CoordGrid_ResetCells() {
@@ -151,6 +166,8 @@ CoordGrid_HighlightColumn(colKey) {
         r += 1
     }
     Gui, CoordGrid:Show, NA
+    Gui, CoordGrid:+LastFound
+    WinSet, TransColor, 000115
 }
 
 ; ==== Grid-active hotkeys (gated by coordGridCaptureActive flag) ====
@@ -210,7 +227,9 @@ CoordGrid_HighlightColumn(colKey) {
 #If
 
 CoordGrid_HandleKey(key) {
-    global CoordGrid_FirstKey, CoordGrid_SecondKey, CoordGrid_TapCount
+    global CoordGrid_FirstKey, CoordGrid_SecondKey, CoordGrid_TapCount, coordGridCaptureActive
+    if (!coordGridCaptureActive)
+        return
     SetTimer, CoordGrid_ResetTap, Off
     if (CoordGrid_TapCount = 0) {
         CoordGrid_TapCount := 1
@@ -226,7 +245,8 @@ CoordGrid_HandleKey(key) {
 
 CoordGrid_ResetTap:
     CoordGrid_TapCount := 0
-    CoordGrid_ResetCells()
+    if (coordGridCaptureActive)
+        CoordGrid_Redraw()
 return
 
 CoordGrid_Move(dx, dy) {
