@@ -17,12 +17,12 @@ return
 
 ^+!#n::Run, wt.exe -p archlinux wsl nvim -c 'read !win32yank.exe -o'
 
-#y::Run, wt.exe -p archlinux wsl zsh -ic 'y /mnt/d/Downloads/'
+#y::Run, wt.exe -p archlinux wsl zsh -ic 'y /mnt/c/Users/zion/Downloads/'
 
-!Enter::Run, wt.exe -p Arch -d D:\Downloads
+!Enter::Run, wt.exe -p Arch -d C:\Users\zion\Downloads
 
 !+Enter::
-FileRead, workdir, C:\Users\zionpu\.workdir
+FileRead, workdir, C:\Users\zion\.workdir
 Run, wt.exe -p Arch -d "%workdir%"
 return
 
