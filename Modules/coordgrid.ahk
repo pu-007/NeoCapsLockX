@@ -35,28 +35,50 @@ CoordGrid_Init() {
         return
     _done := true
 
-    CoordGrid_GridH := A_ScreenHeight
-    CoordGrid_GridW := A_ScreenWidth
     CoordGrid_Rows := 26
     CoordGrid_Cols := 26
-    CoordGrid_RowSp := CoordGrid_GridH / CoordGrid_Rows
-    CoordGrid_ColSp := CoordGrid_GridW / CoordGrid_Cols
     CoordGrid_Keys := ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
     CoordGrid_Visible := false
     CoordGrid_Built := false
     CoordGrid_FirstKey := ""
     CoordGrid_SecondKey := ""
     CoordGrid_TapCount := 0
+    CoordGrid_GridW := A_ScreenWidth
+    CoordGrid_GridH := A_ScreenHeight
+    CoordGrid_RowSp := CoordGrid_GridH / CoordGrid_Rows
+    CoordGrid_ColSp := CoordGrid_GridW / CoordGrid_Cols
+    CoordGrid_CtrlSize := 21   ; default; recalculated in Build
+    CoordGrid_BuiltW := 0
+    CoordGrid_BuiltH := 0
 }
 
 ; ==== Grid GUI ====
 ; +LastFound: allows WinSet to target this GUI before it is shown.
 CoordGrid_Build() {
     global
-    if (CoordGrid_Built)
+    if (CoordGrid_Built && CoordGrid_GridW = CoordGrid_BuiltW && CoordGrid_GridH = CoordGrid_BuiltH)
         return
+    if (CoordGrid_Built) {
+        Gui, CoordGrid:Destroy
+        CoordGrid_Built := false
+    }
 
     Gui, CoordGrid:New, +AlwaysOnTop -Caption +ToolWindow +LastFound
+    Gui, CoordGrid:-DPIScale  ; Disable AHK auto-scaling — mouse.ahk sets per-monitor
+                               ; DPI awareness, so controls must use raw physical pixels
+                               ; to match MouseMove,Screen coordinate space.
+
+    ; Compute font/control size proportional to cell dimensions.
+    ; For 1080p (~42px cells): font≈14, ctrl≈28.  For 4K (~83px): font≈29, ctrl≈58.
+    fontSize := Round(CoordGrid_RowSp * 0.35)
+    if (fontSize < 9)
+        fontSize := 9
+    if (fontSize > 36)
+        fontSize := 36
+    CoordGrid_CtrlSize := fontSize * 2
+    if (CoordGrid_CtrlSize < 21)
+        CoordGrid_CtrlSize := 21
+    Gui, CoordGrid:Font, s%fontSize%, Consolas
     Gui, CoordGrid:Color, 000115
 
     rowCounter := 0
@@ -69,16 +91,18 @@ CoordGrid_Build() {
             colX := Round(colCounter * CoordGrid_ColSp)
             colAlpha := CoordGrid_Keys[colCounter + 1]
             StringUpper, colAlpha, colAlpha
-            Gui, CoordGrid:Add, Progress, % "w21 h21 x" . colX . " y" . rowY . " BackgroundFFFFFF disabled vCG_p_" . colCounter . "_" . rowCounter
-            Gui, CoordGrid:Add, Text, % "w21 h21 x" . colX . " y" . rowY . " Border 0x201 ReadOnly BackgroundTrans cBlack vCG_t_" . colCounter . "_" . rowCounter, % colAlpha . rowAlpha
+            Gui, CoordGrid:Add, Progress, % "w" CoordGrid_CtrlSize " h" CoordGrid_CtrlSize " x" . colX . " y" . rowY . " BackgroundFFFFFF disabled vCG_p_" . colCounter . "_" . rowCounter
+            Gui, CoordGrid:Add, Text, % "w" CoordGrid_CtrlSize " h" CoordGrid_CtrlSize " x" . colX . " y" . rowY . " Border 0x201 ReadOnly BackgroundTrans cBlack vCG_t_" . colCounter . "_" . rowCounter, % colAlpha . rowAlpha
             colCounter += 1
         } Until colCounter = CoordGrid_Cols
         rowCounter += 1
     } Until rowCounter = CoordGrid_Rows
 
-    Gui, CoordGrid:Show, Hide W%CoordGrid_GridW% H%CoordGrid_GridH%, CoordGrid
+    Gui, CoordGrid:Show, x0 y0 Hide W%CoordGrid_GridW% H%CoordGrid_GridH%, CoordGrid
     Gui, CoordGrid:+LastFound
     WinSet, TransColor, 000115
+    CoordGrid_BuiltW := CoordGrid_GridW
+    CoordGrid_BuiltH := CoordGrid_GridH
     CoordGrid_Built := true
 }
 
@@ -95,6 +119,14 @@ CoordGrid_Toggle() {
 CoordGrid_Show() {
     Critical
     global CoordGrid_Visible, coordGridCaptureActive, CapsLock, capsLockActive, CapsLock2
+    global CoordGrid_GridW, CoordGrid_GridH, CoordGrid_RowSp, CoordGrid_ColSp, CoordGrid_Rows, CoordGrid_Cols
+    ; Refresh dimensions from primary screen each time grid opens.
+    ; With -DPIScale on the GUI (set in Build), A_ScreenWidth/Height and
+    ; MouseMove,Screen all use the same raw physical pixel coordinate space.
+    CoordGrid_GridW := A_ScreenWidth
+    CoordGrid_GridH := A_ScreenHeight
+    CoordGrid_RowSp := CoordGrid_GridH / CoordGrid_Rows
+    CoordGrid_ColSp := CoordGrid_GridW / CoordGrid_Cols
     CoordGrid_Build()
     CapsLock2 := ""
     CapsLock := ""
@@ -106,6 +138,7 @@ CoordGrid_Show() {
 
 CoordGrid_Hide() {
     global CoordGrid_Visible, coordGridCaptureActive, CapsLock, CapsLock2
+    global CoordGrid_TapCount
     SetTimer, CoordGrid_ResetTap, Off
     coordGridCaptureActive := false
     CapsLock2 := ""
@@ -140,7 +173,9 @@ CoordGrid_ResetCells() {
         }
         r += 1
     }
-    Gui, CoordGrid:Show, NA
+    Gui, CoordGrid:Show, x0 y0 NA
+    Gui, CoordGrid:+LastFound
+    WinSet, TransColor, 000115
 }
 
 CoordGrid_HighlightColumn(colKey) {
@@ -165,7 +200,7 @@ CoordGrid_HighlightColumn(colKey) {
         }
         r += 1
     }
-    Gui, CoordGrid:Show, NA
+    Gui, CoordGrid:Show, x0 y0 NA
     Gui, CoordGrid:+LastFound
     WinSet, TransColor, 000115
 }
@@ -257,15 +292,22 @@ CoordGrid_Move(dx, dy) {
 ; ==== Navigation ====
 CoordGrid_Navigate() {
     global CoordGrid_Rows, CoordGrid_RowSp, CoordGrid_ColSp, CoordGrid_FirstKey, CoordGrid_SecondKey
+    global CoordGrid_CtrlSize
     CoordMode, Mouse, Screen
 
     xKey := CoordGrid_FirstKey
     yKey := CoordGrid_SecondKey
-    xIdx := Floor(Asc(xKey) - 97)
-    yIdx := CoordGrid_Rows - Floor(Asc(yKey) - 97)
+    xIdx := Floor(Asc(xKey) - 97)                             ; 0–25  (A=left  … Z=right)
+    yIdx := CoordGrid_Rows - 1 - Floor(Asc(yKey) - 97)       ; 25–0  (A=bottom … Z=top)
 
-    xCoord := (xIdx + 0.2) * CoordGrid_ColSp
-    yCoord := (yIdx - 0.7) * CoordGrid_RowSp
+    ; Compute the exact label control position (same Round() logic as Build).
+    ; This eliminates the sawtooth rounding-error pattern from fractional ColSp.
+    colX := Round(xIdx * CoordGrid_ColSp)
+    rowY := Round(yIdx * CoordGrid_RowSp)
+
+    ; Target the center of the control (where the text label is visually centered).
+    xCoord := colX + CoordGrid_CtrlSize // 2
+    yCoord := rowY + CoordGrid_CtrlSize // 2
 
     CoordGrid_Hide()
     MouseMove, % xCoord, % yCoord, 0
