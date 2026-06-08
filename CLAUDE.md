@@ -60,6 +60,25 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+## 5. AHK v1 Coordinate Debugging
+
+**When GUI controls and MouseMove coordinates don't align, check these in order:**
+
+1. **DPI auto-scaling conflict** — AHK v1 auto-scales Gui control positions by system DPI by default. If the script calls `SetProcessDpiAwareness(2)`, `MouseMove,Screen` uses raw physical pixels, but the Gui still applies its own scaling. Symptoms: systematic upper-left or lower-right offset proportional to DPI scale. Fix: `Gui, Name:-DPIScale` BEFORE adding controls.
+
+2. **Round() drift between layout and navigation** — If `Build()` uses `Round(n * spacing)` for control positions but `Navigate()` uses `(n + offset) * spacing` (floating-point), the fractional `spacing` causes a sawtooth error pattern: some cells round up, some down. Symptoms: inconsistent offset per cell ("random at E, K positions"). Fix: use **identical** `Round()` expressions in both layout and navigation:
+   ```
+   ; Build:
+   colX := Round(idx * spacing)
+   ; Navigate — same formula:
+   colX := Round(idx * spacing)
+   xCoord := colX + ctrlHalfSize
+   ```
+
+3. **Verify error direction before making changes** — If mouse is upper-left of target, coordinates are too small. If lower-right, coordinates are too large. Use the direction to narrow the root cause (scaling factor, offset, or rounding).
+
+4. **Prefer WinGetPos over stored coordinates** — After arrow-key grid movement or DPI-per-monitor transitions, stored GUI positions may be stale. `WinGetPos` returns the actual screen position in the same coordinate system as `MouseMove,Screen`.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
