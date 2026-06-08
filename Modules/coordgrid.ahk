@@ -81,6 +81,12 @@ CoordGrid_Build() {
     Gui, CoordGrid:Font, s%fontSize%, Consolas
     Gui, CoordGrid:Color, 000115
 
+    ; Padding: Progress background extends beyond text to create a border frame.
+    ; At 1080p ~3px, at 4K ~6px.  Prevents letters from feeling "cut off" at edges.
+    CoordGrid_Pad := Round(CoordGrid_CtrlSize * 0.1)
+    if (CoordGrid_Pad < 2)
+        CoordGrid_Pad := 2
+
     rowCounter := 0
     Loop {
         rowY := Round((CoordGrid_Rows - 1 - rowCounter) * CoordGrid_RowSp)
@@ -91,8 +97,20 @@ CoordGrid_Build() {
             colX := Round(colCounter * CoordGrid_ColSp)
             colAlpha := CoordGrid_Keys[colCounter + 1]
             StringUpper, colAlpha, colAlpha
-            Gui, CoordGrid:Add, Progress, % "w" CoordGrid_CtrlSize " h" CoordGrid_CtrlSize " x" . colX . " y" . rowY . " BackgroundFFFFFF disabled vCG_p_" . colCounter . "_" . rowCounter
-            Gui, CoordGrid:Add, Text, % "w" CoordGrid_CtrlSize " h" CoordGrid_CtrlSize " x" . colX . " y" . rowY . " Border 0x201 ReadOnly BackgroundTrans cBlack vCG_t_" . colCounter . "_" . rowCounter, % colAlpha . rowAlpha
+
+            ; Checkerboard: alternate white and light gray-blue backgrounds.
+            ; White = FFFFFF, Light gray-blue = DCE2EC.
+            isEven := Mod(colCounter + rowCounter, 2) = 0
+            bgColor := isEven ? "FFFFFF" : "DCE2EC"
+
+            ; Progress extends CoordGrid_Pad beyond text on each side for padding.
+            progX := (colX - CoordGrid_Pad < 0) ? 0 : colX - CoordGrid_Pad
+            progY := (rowY - CoordGrid_Pad < 0) ? 0 : rowY - CoordGrid_Pad
+            progW := CoordGrid_CtrlSize + CoordGrid_Pad * 2
+            progH := CoordGrid_CtrlSize + CoordGrid_Pad * 2
+
+            Gui, CoordGrid:Add, Progress, % "w" progW " h" progH " x" progX " y" progY " Background" bgColor " disabled vCG_p_" colCounter "_" rowCounter
+            Gui, CoordGrid:Add, Text, % "w" CoordGrid_CtrlSize " h" CoordGrid_CtrlSize " x" colX " y" rowY " Border 0x201 ReadOnly BackgroundTrans cBlack vCG_t_" colCounter "_" rowCounter, % colAlpha . rowAlpha
             colCounter += 1
         } Until colCounter = CoordGrid_Cols
         rowCounter += 1
