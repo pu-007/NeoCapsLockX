@@ -13,7 +13,7 @@ SetStoreCapslockMode, Off
 ; ==== Trigger: CapsLock (held or latched) + backtick ====
 #If (CapsLock || capsLockActive)
 
-*SC029::
+*SC02B::
     CapsLock2 := ""
     CoordGrid_Toggle()
 return
@@ -229,7 +229,7 @@ CoordGrid_HighlightColumn(colKey) {
     ; Close keys
     Esc::
     Backspace::
-    SC029::
+    SC02B::
         CoordGrid_Hide()
     return
 
