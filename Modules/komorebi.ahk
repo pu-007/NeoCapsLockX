@@ -364,6 +364,8 @@ else
     Komorebic("focus-monitor 1")
 return
 
+;=== app functions ===
+
 ; Chrome toggle
 c::
 CapsLock2:=""
@@ -388,5 +390,9 @@ if (isVisible) {
     WinActivate, % "ahk_id " idList1
 }
 return
+
+n::Run, wt.exe -p archlinux wsl nvim -c 'read !win32yank.exe -o'
+
+y::Run, wt.exe -p archlinux wsl zsh -ic 'y /mnt/c/Users/zion/Downloads/'
 
 #If
